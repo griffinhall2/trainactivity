@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
 </head>
 
 <body>
@@ -59,7 +61,7 @@
                         </div>
                         <div class="form-group">
                             <label for="first-time">First Train Time (HH:mm - military time)</label>
-                            <input type="text" class="form-control" id="first-time">
+                            <input type="text" class="form-control" id="train-time">
                         </div>
                         <div class="form-group">
                             <label for="frequency">Frequency (min)</label>
@@ -89,8 +91,73 @@
     // Reference the Database
     var database = firebase.database();
 
+    // Intitial Values
+    var trainName = "";
+    var destination = "";
+    var trainTime = 0;
+    var frequency = 0;
 
+    $("#submit").on("click", function () {
+        event.preventDefault();
+    });
+
+    trainName = $("#train-name").val().trim();
+    destination = $("#destination").val().trim();
+    trainTime = $("#train-time").val().trim();
+    frequency = $("#frequency").val().trim();
+
+    console.log("train name: " + trainName)
+    console.log("destination: " + destination)
+    console.log("train time: " + trainTime)
+    console.log("frequency: " + frequency)
+    
+    database.ref().push({
+        trainName: trainName,
+        destination: destination,
+        trainTime: trainTime,
+        frequency: frequency,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    
+    // Firebase watcher .on("child_added"
+    database.ref().on("child_added", function(snapshot) {
+   
+    // Store snapshot as variable
+    var sv = snapshot.val();
+    // Store Current Time
+    var currentTime = moment();
+    // Convert the first train time 
+    var trainTimeConv = moment(sv.trainTime, "hh:mm").subtract(1, "years");
+    var timeDifference = moment().diff(moment(trainTimeConv), "minutes");
+    var remainingTime = timeDifference % sv.frequency;
+    // Minutes away of next train
+    var minutesAway = sv.frequency - remainingTime;
+    // Next train arrival time formatted
+    var arrivalTime = moment().add(minutesAway, "minutes");
+
+    // Give variable to new row
+    var addRow = $("<tr>");
+    
+    // Append new row variable to table body
+    $("tbody").append(addRow);
+    
+    // Append the data to new row
+    addRow.append("<td>" + sv.trainName + "</td>");
+    addRow.append("<td>" + sv.destination + "</td>");
+    addRow.append("<td>" + sv.frequency + "</td>");
+    addRow.append("<td>" + arrivalTime + "</td>");
+    addRow.append("<td>" + moment(minutesAway).format("hh:mm") + "</td>");
+    
+    
+    
+    
+    // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+    });
     </script>
+
 </div>
 
 </body>
