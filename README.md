@@ -1,1 +1,1 @@
-# trqinactivity
+This is my Train Activity. It is a train schedule where the user can add a train to the schedule which will go in a google firebase.
