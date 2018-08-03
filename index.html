@@ -91,32 +91,27 @@
     // Reference the Database
     var database = firebase.database();
 
-    // Intitial Values
-    var trainName = "";
-    var destination = "";
-    var trainTime = 0;
-    var frequency = 0;
-
     $("#submit").on("click", function () {
         event.preventDefault();
-    });
+    
 
-    trainName = $("#train-name").val().trim();
-    destination = $("#destination").val().trim();
-    trainTime = $("#train-time").val().trim();
-    frequency = $("#frequency").val().trim();
+    var trainName = $("#train-name").val().trim();
+    var destination = $("#destination").val().trim();
+    var trainTime = $("#train-time").val().trim();
+    var frequency = $("#frequency").val().trim();
 
     console.log("train name: " + trainName)
     console.log("destination: " + destination)
     console.log("train time: " + trainTime)
     console.log("frequency: " + frequency)
     
-    database.ref().push({
-        trainName: trainName,
+    var newTrain = {
+        name: trainName,
         destination: destination,
         trainTime: trainTime,
-        frequency: frequency,
-        dateAdded: firebase.database.ServerValue.TIMESTAMP
+        frequency: frequency
+}
+    database.push(newTrain);
     });
 
     
