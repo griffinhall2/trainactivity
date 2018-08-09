@@ -67,7 +67,7 @@
                             <label for="frequency">Frequency (min)</label>
                             <input type="text" class="form-control" id="frequency"> 
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" id ="input" class="btn btn-primary">Submit</button>
                 </div>
             </div>       
         </div>
@@ -111,7 +111,7 @@
         trainTime: trainTime,
         frequency: frequency
 }
-    database.push(newTrain);
+    database.ref().push(newTrain);
     });
 
     
@@ -138,7 +138,7 @@
     $("tbody").append(addRow);
     
     // Append the data to new row
-    addRow.append("<td>" + sv.trainName + "</td>");
+    addRow.append("<td>" + sv.name + "</td>");
     addRow.append("<td>" + sv.destination + "</td>");
     addRow.append("<td>" + sv.frequency + "</td>");
     addRow.append("<td>" + arrivalTime + "</td>");
